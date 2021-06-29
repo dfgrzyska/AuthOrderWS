@@ -12,7 +12,7 @@
 
 Build project -> parent-project -> package
 
-`docker build -t opa-ws:1.0 .`
+`docker build -t dgrzyska/opa-ws:1.0 .`
 ## 2. Run docker compose:
 `docker compose up`
 
