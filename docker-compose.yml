@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  opa-ws-db:
+    image: mysql:8.0
+    restart: on-failure
+    container_name: opa-ws-db
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_ROOT_HOST=%
+    healthcheck:
+      test: out=$$(mysqladmin ping -h localhost -P 33060 -u root --password=root 2>&1); echo $$out | grep 'mysqld is alive' || { echo $$out; exit 1; }
+    ports:
+      - 33060:3306
+
+  opa-ws:
+    image: dgrzyska/opa-ws:1.0
+    depends_on:
+      opa-ws-db:
+        condition: service_healthy
+    ports:
+      - 8080:8080
+
+  opa:
+    image: openpolicyagent/opa:0.29.4
+    container_name: opa-server
+    ports:
+      - 8181:8181
+    command:
+      - "run"
+      - "--server"
+      - "--log-level=debug"
